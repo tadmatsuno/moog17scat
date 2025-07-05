@@ -26,12 +26,27 @@ c***  Local Arrays/Variables
 c     real*8  J_cont(100), S_cont(100)
 
 c*** DETERMINE: rhox for MODELS that do not contain these values.  An additional constant might be necessary as kappa does vary.
-      do i=1, ntau
-         if (modtype .eq. 'KURTYPE   ' .or.
+c     do i=1, ntau
+c        if (modtype .eq. 'KURTYPE   ' .or.
+c    >       modtype .eq. 'KURUCZ    ' .or.
+c    >       modtype .eq. 'WEBMARCS  ') cycle
+c        rhox(i) = tauref(i)/(kapref(i)/rho(i))
+c     enddo   
+
+c     TM (05.07.2025): The above implementation is indeed wrong due to the exact reason mentioned earlier: kappa does vary. 
+c         The following should carry out a proper integration
+      if (.not. (modtype .eq. 'KURTYPE   ' .or.
      >       modtype .eq. 'KURUCZ    ' .or.
-     >       modtype .eq. 'WEBMARCS  ') cycle
-         rhox(i) = tauref(i)/(kapref(i)/rho(i))
-      enddo   
+     >       modtype .eq. 'WEBMARCS  ')) then
+         first = rho(1) / kapref(1)
+         totrhox = rinteg(tauref, rho / kapref, rhox, ntau, first)
+         rhox(1) = first
+         do i = 2, ntau
+            rhox(i) = rhox(i-1) + rhox(i)
+         enddo
+      endif
+c
+c
 
 c*** INTEGRATION IN MU: Call the AngWeight.f subroutine (Gaussian Quadrature Summation).
 c    During initial pass, calculate the Gaussian integration points and weights.
