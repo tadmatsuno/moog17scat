@@ -3,7 +3,7 @@ MOOG 2017 version with scattering
 
 We have removed all code involving supermongo on purpose. If you want supermongo, get the original MOOG from Jen Sobeck's page.
 
-# UPDATE by T. Matsuno: July 05, 2025
+# UPDATE by TM: July 05, 2025
 I have updated rhox calculations in Sourcefunc_scat_cont.f and Sourcefunc_scat_line.f.
 These calculations are carried out only when the model atmosphere does not have rhox column. 
 The original implementation ignores the variation of kappa with optical depth and hence led to incorrect calculations. 
